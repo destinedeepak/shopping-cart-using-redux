@@ -14,7 +14,7 @@ function shoppingReducer(
     case 'sortBySize':
       return { ...state, activeSizes: [...action.payload] };
     default:
-      return { ...state, products };
+      return { ...state, products: [...products] };
   }
 }
 const enhancers = compose(
