@@ -2,84 +2,33 @@ import React from 'react';
 import Aside from './Aside';
 import Products from './Products';
 import Cart from './Cart';
+import { addItems } from '../store/action';
+import { connect } from 'react-redux';
 class App extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      activeSizes: [],
-      activeOrder: 'default',
-      cart: {},
-      isCartOpen: false,
-    };
-  }
-
-  handleSortByPrice = (event) => {
-    this.setState({
-      activeOrder: event.target.value,
-    });
-  };
   addToCart = (index) => {
-    this.setState((prevState) => {
-      let cartItems = prevState.cart;
-      let keys = Object.keys(cartItems);
-      if (keys.includes(String(index))) {
-        cartItems[index] = Number(cartItems[index]) + 1;
-        return {
-          cart: cartItems,
-          isCartOpen: true,
-        };
-      } else {
-        cartItems[index] = 1;
-        return {
-          cart: cartItems,
-          isCartOpen: true,
-        };
-      }
-    });
-  };
-  decreaseQuantity = (index) => {
-    let cartItems = this.state.cart;
-    if (cartItems[index] > 1) {
-      cartItems[index] = Number(cartItems[index]) - 1;
-      this.setState((prevState) => ({
-        cart: cartItems,
-      }));
+    let cartItems = this.props.cart;
+    let keys = Object.keys(cartItems);
+    if (keys.includes(String(index))) {
+      cartItems[index] = Number(cartItems[index]) + 1;
     } else {
-      return;
+      cartItems[index] = 1;
     }
-  };
-  removeFromCart = (index) => {
-    let cartItems = this.state.cart;
-    delete cartItems[index];
-    this.setState((prevState) => ({
-      cart: cartItems,
-    }));
-  };
-  handleCartToggle = () => {
-    this.setState((prevState) => ({
-      isCartOpen: !prevState.isCartOpen,
-    }));
+    this.props.dispatch(addItems(cartItems, true));
   };
 
   render() {
     return (
       <main className="flex container">
         <Aside />
-        <Products
-          state={this.state}
-          handleSortByPrice={this.handleSortByPrice}
-          addToCart={this.addToCart}
-        />
-        <Cart
-          state={this.state}
-          addToCart={this.addToCart}
-          decreaseQuantity={this.decreaseQuantity}
-          removeFromCart={this.removeFromCart}
-          handleCartToggle={this.handleCartToggle}
-        />
+        <Products addToCart={this.addToCart} />
+        <Cart addToCart={this.addToCart} />
       </main>
     );
   }
 }
-
-export default App;
+function mapStateToProps(state) {
+  return {
+    cart: state.cart,
+  };
+}
+export default connect(mapStateToProps)(App);
