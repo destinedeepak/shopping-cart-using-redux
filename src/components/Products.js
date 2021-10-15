@@ -35,7 +35,6 @@ class Products extends React.Component {
           return b.price - a.price;
         });
       }
-
       return products;
     }
 
